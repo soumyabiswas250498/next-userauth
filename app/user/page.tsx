@@ -1,13 +1,14 @@
 import React from 'react'
 import ThemeSwitch from '@/src/ThemeSwitch'
+
 function page() {
   return (
-    <div className='m-2'>
-        <ThemeSwitch />
-        <div className='w-48 h-16 bg-slate-400 dark:bg-slate-900'>
-            <p>Hello</p>
+    <div className='w-full h-[80vh] flex justify-center items-center overflow-hidden'>
+      <div className='px-12 md:px-0 md:w-7/12 md:h-2/3 border-[1px] rounded-md'>
 
-        </div>
+      </div>
+
+
     </div>
   )
 }
