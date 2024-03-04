@@ -22,7 +22,7 @@ export function HoverMenu(props: any) {
     }
     
   return (
-    <HoverCard openDelay={10} closeDelay={10}>
+    <HoverCard openDelay={10} closeDelay={100}>
       <HoverCardTrigger asChild>
         <Button variant="default">{menuLabel}</Button>
       </HoverCardTrigger>

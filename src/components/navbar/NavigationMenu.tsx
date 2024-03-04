@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import ThemeSwitch from "@/src/ThemeSwitch";
+import ThemeSwitch from "../ThemeSwitch";
 import { HoverMenu } from "../menu/HoverMenu";
 import { Button } from "@/components/ui/button";
 

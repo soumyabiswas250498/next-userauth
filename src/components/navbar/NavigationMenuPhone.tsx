@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import ThemeSwitch from "@/src/ThemeSwitch";
+import ThemeSwitch from "../ThemeSwitch";
 import { PhoneMenu } from "../menu/PhoneNavMenu";
 import { Button } from "@/components/ui/button";
 
