@@ -28,13 +28,13 @@ export default function ThemeSwitch() {
   )
 
   if (resolvedTheme === 'dark') {
-    return <div className="cursor-pointer p-2 border border-primary rounded-md" onClick={() => setTheme('light')}>
+    return <div className="cursor-pointer h-6 w-6 flex justify-center items-center border border-primary rounded-md" onClick={(e) =>{ e.stopPropagation(); setTheme('light')}}>
       <FiSun  />
     </div>
   }
 
   if (resolvedTheme === 'light') {
-    return <div className="cursor-pointer p-2 border border-primary rounded-md" onClick={() => setTheme('dark')}>
+    return <div className="cursor-pointer h-6 w-6 flex justify-center items-center border border-primary rounded-md" onClick={(e) =>{e.stopPropagation(); setTheme('dark')}}>
       <FiMoon  />
     </div>
   }
