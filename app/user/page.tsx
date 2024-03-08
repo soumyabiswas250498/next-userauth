@@ -1,5 +1,4 @@
 import React from 'react'
-import ThemeSwitch from '@/src/ThemeSwitch'
 
 function page() {
   return (
