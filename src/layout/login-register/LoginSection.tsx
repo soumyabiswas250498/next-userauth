@@ -1,20 +1,32 @@
+"use client"
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import React from 'react';
 import { useFormik } from "formik";
 import { loginSchema } from '@/src/schemas/LoginRegisterSchema';
+import { useSession, signIn, signOut } from "next-auth/react"
 
 const initialValues = {
     email: '',
     password: ''
 }
 
+async function signInHandler(email: string, pass: string) {
+    const result = await signIn('credentials', {redirect: false, email: email, password: pass })
+    console.log(result)
+}
+
 export default function LoginSection() {
+    const data = useSession()
+    console.log(data)
     const {errors, touched, values, handleChange, handleBlur, handleSubmit, resetForm} =  useFormik({
         initialValues: initialValues,
         validationSchema: loginSchema,
         onSubmit: ()=>{
             console.log(values)
+            signInHandler(values.email, values.password)
+           
         }
     });
     return (
