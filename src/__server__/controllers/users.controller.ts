@@ -9,7 +9,6 @@ import {
 } from '../services/user.service';
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
-import { asyncHandler } from '../utils/AsyncHandler';
 import httpStatus from 'http-status';
 
 interface dataI {
@@ -43,9 +42,8 @@ async function loginUser(data: any) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'BAD_REQUEST');
   }
   const { email, password } = data;
-
   const user = await CheckExistingUser('', email);
-  // console.log(user);
+  
 
   if (!user) {
     throw new Error( 'User does not exist');

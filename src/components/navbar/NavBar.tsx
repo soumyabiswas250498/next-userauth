@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { NavigationMenu } from './NavigationMenu';
 
 
-import { SheetDemo } from './NavigationMenuPhone';
+import { PhonNavigationMenu } from './NavigationMenuPhone';
 
 
 const menus = {
@@ -22,7 +22,7 @@ function NavBar() {
 
 
 
-            <SheetDemo />
+            <PhonNavigationMenu />
         </div>
     )
 }

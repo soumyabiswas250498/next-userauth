@@ -5,7 +5,9 @@ import { Input } from '@/components/ui/input'
 import React from 'react';
 import { useFormik } from "formik";
 import { loginSchema } from '@/src/schemas/LoginRegisterSchema';
-import { useSession, signIn, signOut } from "next-auth/react"
+import {  signIn } from "next-auth/react";
+import { useRouter } from 'next/navigation';
+
 
 const initialValues = {
     email: '',
@@ -15,17 +17,21 @@ const initialValues = {
 async function signInHandler(email: string, pass: string) {
     const result = await signIn('credentials', {redirect: false, email: email, password: pass })
     console.log(result)
+    return result;
 }
 
 export default function LoginSection() {
-    const data = useSession()
-    console.log(data)
+    const router = useRouter();
     const {errors, touched, values, handleChange, handleBlur, handleSubmit, resetForm} =  useFormik({
         initialValues: initialValues,
         validationSchema: loginSchema,
-        onSubmit: ()=>{
+        onSubmit: async ()=>{
             console.log(values)
-            signInHandler(values.email, values.password)
+            const result = await signInHandler(values.email, values.password);
+            if(!result?.error){
+                router.push('/')
+            }
+
            
         }
     });
