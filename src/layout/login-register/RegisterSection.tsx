@@ -1,8 +1,13 @@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useFormik } from "formik";
 import { regSchema } from '@/src/schemas/LoginRegisterSchema';
+import useAuthHook from '@/src/hooks/useAuthHook';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/src/store/store';
+import { Loader2 } from "lucide-react";
+import { useRouter } from 'next/navigation';
 
 const initialValues = {
   name: '',
@@ -13,13 +18,26 @@ const initialValues = {
 }
 
 function RegisterSection() {
+  const {handleRegistration} = useAuthHook();
+  const {isLoading, success, error, data}  = useSelector((state: RootState) => state.registerData);
+  const router = useRouter();
+  // const isLoading = true;
+  console.log(data, '***data')
   const { errors, touched, values, handleChange, handleBlur, handleSubmit, resetForm } = useFormik({
     initialValues: initialValues,
     validationSchema: regSchema,
     onSubmit: () => {
-      console.log(values)
+      // console.log(values)
+      handleRegistration(values);
     }
   });
+
+  useEffect(()=>{
+    if(success){
+      resetForm();
+      router.push('/auth/verify-pending')
+    }
+  },[success])
 
   return (
     <div className='w-full h-full flex justify-center items-center'>
@@ -53,7 +71,9 @@ function RegisterSection() {
 
           </div>
         </div>
-        <Button variant={'default'} type={'submit'} className='mt-1' > Register </Button>
+        <Button variant={'default'} type={'submit'} className='mt-1' disabled={isLoading} > 
+        {isLoading ? <Loader2 className="h-6 w-6 animate-spin" />: 'Register'}
+        </Button>
 
       </form>
     </div>

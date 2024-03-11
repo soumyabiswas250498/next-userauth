@@ -10,12 +10,18 @@ import {
 import { ApiError } from '../utils/ApiError';
 import { ApiResponse } from '../utils/ApiResponse';
 import httpStatus from 'http-status';
+import nodemailer from 'nodemailer';
+import { sendActivationEmail } from '../utils/EmailSender';
 
 interface dataI {
   fullname: string;
   username: string;
   email: string;
   password: string;
+}
+interface VerifyI {
+  email?: string,
+  userId?: string,
 }
 
 async function registerUser(data: dataI) {
@@ -25,40 +31,50 @@ async function registerUser(data: dataI) {
   if (existingUser) {
     throw new ApiError(
       httpStatus.CONFLICT,
-      `User with ${
-        existingUser.email === email ? 'email' : 'username'
+      `User with ${existingUser.email === email ? 'email' : 'username'
       } already exists`
     );
   } else {
     const newUser = await CreateUser(fullname, username, email, password);
+    await verifyUser({ email: newUser.email, userId: newUser._id })
     return newUser;
   }
+}
+
+async function verifyUser({ email, userId }: VerifyI) {
+  try {
+    await sendActivationEmail({ email: email, userId: userId } )
+
+  } catch (error) {
+    console.log(error)
+  }
+
 }
 
 async function loginUser(data: any) {
 
   const validation = await validator(data, loginSchema)
-  if(!validation){
+  if (!validation) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'BAD_REQUEST');
   }
   const { email, password } = data;
   const user = await CheckExistingUser('', email);
-  
+
 
   if (!user) {
-    throw new Error( 'User does not exist');
-    
+    throw new Error('User does not exist');
+
   } else if (!user?.isVerified) {
-    throw new Error( 'Email ID not verified');
+    throw new Error('Email ID not verified');
   }
 
-    const isPasswordValid = await user.isPasswordCorrect(password);
-    if (!isPasswordValid) {
-      throw new Error( 'Invalid credentials');
-    }
-    const loggedInUser = await userDetails(user._id);
-    return loggedInUser;
-    // console.log(loggedInUser)
+  const isPasswordValid = await user.isPasswordCorrect(password);
+  if (!isPasswordValid) {
+    throw new Error('Invalid credentials');
+  }
+  const loggedInUser = await userDetails(user._id);
+  return loggedInUser;
+  // console.log(loggedInUser)
 }
 
 //   return res
