@@ -4,11 +4,12 @@ import React, { useEffect } from 'react';
 import { useFormik } from "formik";
 import { regSchema } from '@/src/schemas/LoginRegisterSchema';
 import useAuthHook from '@/src/hooks/useAuthHook';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/src/store/store';
 import { Loader2 } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { setSuccessRegister } from '@/src/store/reducers/registerSlice';
 
 const initialValues = {
   name: '',
@@ -19,9 +20,10 @@ const initialValues = {
 }
 
 function RegisterSection() {
-  const {handleRegistration} = useAuthHook();
-  const {isLoading, success, error, data}  = useSelector((state: RootState) => state.registerData);
+  const { handleRegistration } = useAuthHook();
+  const { isLoading, success, error, data } = useSelector((state: RootState) => state.registerData);
   const router = useRouter();
+  const dispatch = useDispatch();
 
   const { errors, touched, values, handleChange, handleBlur, handleSubmit, resetForm } = useFormik({
     initialValues: initialValues,
@@ -31,18 +33,19 @@ function RegisterSection() {
     }
   });
 
-  useEffect(()=>{
-    if(success){
+  useEffect(() => {
+    if (success) {
       resetForm();
       router.push('/auth/verify-pending')
+      dispatch(setSuccessRegister(false))
     }
     const emailState = localStorage.getItem('EmailVerify');
-    if(emailState && success === false){
+    if (emailState && success === false) {
       toast.warning('Email verification pending.')
       router.push('/auth/verify-pending')
     }
-  },[success])
-  
+  }, [success])
+
 
   return (
     <div className='w-full h-full flex justify-center items-center'>
@@ -76,8 +79,8 @@ function RegisterSection() {
 
           </div>
         </div>
-        <Button variant={'default'} type={'submit'} className='mt-1' disabled={isLoading} > 
-        {isLoading ? <Loader2 className="h-6 w-6 animate-spin" />: 'Register'}
+        <Button variant={'default'} type={'submit'} className='mt-1' disabled={isLoading} >
+          {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Register'}
         </Button>
 
       </form>

@@ -6,6 +6,8 @@ import { toast } from 'sonner';
 import { encryptClientData, saveEncryptedEmailLocalStorage } from "../helper/useEncryption";
 import { seperator } from "../__server__/utils/constants";
 import { setLoadingresendOtp, setErrorresendOtp, setSuccessresendOtp, setDataresendOtp } from "../store/reducers/resendOtpSlice";
+import { setLoadingLogin, setErrorLogin, setSuccessLogin, setDataLogin } from "../store/reducers/loginSlice";
+import { signIn } from "next-auth/react";
 
 interface UserData {
     name: string;
@@ -18,6 +20,8 @@ interface UserData {
 const useAuthHook = () => {
     const dispatch = useDispatch();
     const router = useRouter();
+
+    // Registration functionality
     async function handleRegistration(data: UserData) {
         const userData = {
             username: data.userName,
@@ -40,10 +44,32 @@ const useAuthHook = () => {
                 saveEncryptedEmailLocalStorage(data.email, true);
                 router.push('/auth/verify-pending')
             }
-            dispatch(setLoadingRegister(false))
-            dispatch(setErrorRegister(true))
+            dispatch(setLoadingRegister(false));
+            dispatch(setErrorRegister(true));
             toast.error(error.response.data?.message);
         }
+    }
+
+    async function signInHandler(email: string, pass: string) {
+        dispatch(setLoadingLogin(true));
+        const result = await signIn('credentials', { redirect: false, email: email, password: pass });
+        dispatch(setLoadingLogin(false));
+        if (result?.status === 200) {
+            toast.success('Login successful')
+            localStorage.removeItem('EmailVerify')
+        } else {
+            if (result?.error === 'Email ID not verified') {
+                toast.error('User is not verified yet.');
+                saveEncryptedEmailLocalStorage(email, true);
+                router.push('/auth/verify-pending')
+
+            } else {
+                toast.error(result?.error)
+            }
+
+        }
+        console.log(result)
+        return result;
     }
 
     async function verifyRequest(email: string, otp: string) {
@@ -79,7 +105,7 @@ const useAuthHook = () => {
 
     }
 
-    return { handleRegistration, verifyRequest, resendVerificationEmail };
+    return { handleRegistration, verifyRequest, resendVerificationEmail, signInHandler };
 }
 
 export default useAuthHook;

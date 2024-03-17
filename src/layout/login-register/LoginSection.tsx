@@ -5,34 +5,30 @@ import { Input } from '@/components/ui/input'
 import React from 'react';
 import { useFormik } from "formik";
 import { loginSchema } from '@/src/schemas/LoginRegisterSchema';
-import {  signIn } from "next-auth/react";
 import { useRouter } from 'next/navigation';
-
+import useAuthHook from '@/src/hooks/useAuthHook';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/src/store/store';
+import { Loader2 } from "lucide-react";
 
 const initialValues = {
     email: '',
     password: ''
 }
 
-async function signInHandler(email: string, pass: string) {
-    const result = await signIn('credentials', {redirect: false, email: email, password: pass })
-    console.log(result)
-    return result;
-}
-
 export default function LoginSection() {
+    const { signInHandler } = useAuthHook();
+    const { isLoading } = useSelector((state: RootState) => state.loginData)
     const router = useRouter();
-    const {errors, touched, values, handleChange, handleBlur, handleSubmit, resetForm} =  useFormik({
+    const { errors, touched, values, handleChange, handleBlur, handleSubmit, resetForm } = useFormik({
         initialValues: initialValues,
         validationSchema: loginSchema,
-        onSubmit: async ()=>{
+        onSubmit: async () => {
             console.log(values)
             const result = await signInHandler(values.email, values.password);
-            if(!result?.error){
+            if (!result?.error) {
                 router.push('/')
             }
-
-           
         }
     });
     return (
@@ -48,7 +44,9 @@ export default function LoginSection() {
                     <Input className='border-primary/50 ring-primary/90 my-1' placeholder='Password' id='password' value={values.password} onChange={handleChange} onBlur={handleBlur} />
                     {touched.password && errors.password ? <p className='text-xs text-red-600 ml-1'>{errors.password}</p> : <p className="text-xs" > &nbsp; </p>}
                 </div>
-                <Button variant={'default'} type={'submit'} className='mt-1' > Login </Button>
+                <Button variant={'default'} type={'submit'} className='mt-1' disabled={isLoading} >
+                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Login'}
+                </Button>
             </form>
 
         </div>
