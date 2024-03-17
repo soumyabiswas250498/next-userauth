@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
-import  registerSlice  from './reducers/registerSlice';
+import registerSlice from './reducers/registerSlice';
+import resendOtpSlice from './reducers/resendOtpSlice';
 
 export const store = configureStore({
   reducer: {
     registerData: registerSlice,
+    resendOtpData: resendOtpSlice,
   },
 })
 

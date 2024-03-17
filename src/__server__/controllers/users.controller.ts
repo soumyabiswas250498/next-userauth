@@ -6,12 +6,20 @@ import {
   generateAccessAndRefreshTokens,
   userDetails,
   logoutService,
+  isUserNotVerified,
+  markVerified
 } from '../services/user.service';
 import { ApiError } from '../utils/ApiError';
-import { ApiResponse } from '../utils/ApiResponse';
 import httpStatus from 'http-status';
-import nodemailer from 'nodemailer';
 import { sendActivationEmail } from '../utils/EmailSender';
+import { decryptAES } from '../utils/EmailSender';
+import { tokenExpiryTime, seperator } from '../utils/constants';
+import { decryptClientData } from '@/src/helper/useEncryption';
+import { isTokenExpired } from '@/src/helper/useEncryption';
+
+
+
+
 
 interface dataI {
   fullname: string;
@@ -20,15 +28,19 @@ interface dataI {
   password: string;
 }
 interface VerifyI {
-  email?: string,
-  userId?: string,
+  token: string
 }
 
 async function registerUser(data: dataI) {
   const { fullname, username, email, password } = data;
-  console.log(fullname);
   const existingUser = await CheckExistingUser(username, email);
   if (existingUser) {
+    if (!existingUser.isVerified) {
+      throw new ApiError(
+        httpStatus.FORBIDDEN,
+        `User is not verified yet.`
+      );
+    }
     throw new ApiError(
       httpStatus.CONFLICT,
       `User with ${existingUser.email === email ? 'email' : 'username'
@@ -36,20 +48,86 @@ async function registerUser(data: dataI) {
     );
   } else {
     const newUser = await CreateUser(fullname, username, email, password);
-    await verifyUser({ email: newUser.email, userId: newUser._id })
+    await sendActivationEmail(newUser.email)
     return newUser;
   }
 }
 
-async function verifyUser({ email, userId }: VerifyI) {
+async function verifyUser(email: string, otp: string) {
+
   try {
-    await sendActivationEmail({ email: email, userId: userId } )
+    const userData = await CheckExistingUser('', email)
+    const [correctOtp, time] = decryptAES(userData.otpToken).split(seperator)
+    const isExpired = isTokenExpired(parseInt(time), tokenExpiryTime)
+    if (isExpired) {
+      return 'expired'
+    } else {
+      if (otp === correctOtp) {
+        const result = await markVerified(email);
+        if (result) {
+          return 'success'
+        } else {
+          return 'update failed'
+        }
 
+      } else {
+        return 'invalid otp'
+      }
+    }
+    // const token = userData.
+    // const [otp, time] = data.split(',')
+    // const currentTime = Date.now() / 1000;
+    // if ((currentTime - parseInt(time)) >= tokenExpiryTime) {
+    //   return 'Expired'
+    // } else {
+    //   const user = await CheckExistingUser('', email);
+    //   if (!user) {
+    //     return 'Invalid token'
+    //   } else {
+    //     const result = await markVerified(email);
+    //     if (result) {
+    //       return 'success'
+    //     } else {
+    //       return 'update failed'
+    //     }
+    //   }
+    // }
   } catch (error) {
-    console.log(error)
+    return 'Invalid token'
   }
-
 }
+
+async function sendVerificationMail(token: string) {
+
+  const data: string = decryptClientData(token);
+  if (!data) {
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      `Invalid Token`
+    );
+  }
+  const [email, time] = data.split(seperator)
+
+  const isExpired = isTokenExpired(parseInt(time), tokenExpiryTime);
+  if (isExpired) {
+    const result = await isUserNotVerified(email);
+    if (result) {
+      await sendActivationEmail(email)
+      return 'success'
+    } else {
+      throw new ApiError(
+        httpStatus.FORBIDDEN,
+        `Invalid Token`
+      );
+    }
+  } else {
+    throw new ApiError(
+      httpStatus.CONFLICT,
+      `Verification link is still valid`
+    );
+  }
+}
+
 
 async function loginUser(data: any) {
 
@@ -111,5 +189,8 @@ async function loginUser(data: any) {
 export {
   registerUser,
   loginUser,
+  verifyUser,
+  sendVerificationMail
+
   // logoutUser
 };

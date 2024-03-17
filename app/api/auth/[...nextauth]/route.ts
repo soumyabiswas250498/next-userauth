@@ -3,11 +3,10 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { loginUser } from '@/src/__server__/controllers/users.controller';
 import connectDB from '@/src/__server__/utils/db_connect';
 
+
 export const authOptions = {
   session: {
     strategy: 'jwt' as const,
-    secret: process.env.REFRESH_TOKEN_SECRET as string,
-    encryption: true,
   },
   providers: [
     CredentialsProvider({
@@ -36,7 +35,7 @@ export const authOptions = {
       },
     }),
   ],
-  secret: process.env.REFRESH_TOKEN_SECRET as string,
+  secret: process.env.REFRESH_TOKEN_SECRET,
   callbacks: {
     jwt: async ({ token, user }: any) => {
       if (user) {
@@ -63,6 +62,7 @@ export const authOptions = {
 };
 
 
-const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+ const handler = NextAuth(authOptions);
+
+ export { handler as GET, handler as POST };

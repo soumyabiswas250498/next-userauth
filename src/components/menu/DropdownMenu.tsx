@@ -48,7 +48,7 @@ export function DropdownMenuRadioGroupDemo(props: PropsI) {
         <DropdownMenuSeparator /> */}
         <DropdownMenuRadioGroup value={value} onValueChange={(e)=>{setValue(e); setLabel(findLabel(e))}}>
           {
-            data.map((item)=><DropdownMenuRadioItem value={item.value}>{item.label}</DropdownMenuRadioItem> )
+            data.map((item, index)=><DropdownMenuRadioItem value={item.value} key={index}>{item.label}</DropdownMenuRadioItem> )
           }
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

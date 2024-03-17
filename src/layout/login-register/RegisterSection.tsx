@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/src/store/store';
 import { Loader2 } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 const initialValues = {
   name: '',
@@ -21,13 +22,11 @@ function RegisterSection() {
   const {handleRegistration} = useAuthHook();
   const {isLoading, success, error, data}  = useSelector((state: RootState) => state.registerData);
   const router = useRouter();
-  // const isLoading = true;
-  console.log(data, '***data')
+
   const { errors, touched, values, handleChange, handleBlur, handleSubmit, resetForm } = useFormik({
     initialValues: initialValues,
     validationSchema: regSchema,
     onSubmit: () => {
-      // console.log(values)
       handleRegistration(values);
     }
   });
@@ -37,7 +36,13 @@ function RegisterSection() {
       resetForm();
       router.push('/auth/verify-pending')
     }
+    const emailState = localStorage.getItem('EmailVerify');
+    if(emailState && success === false){
+      toast.warning('Email verification pending.')
+      router.push('/auth/verify-pending')
+    }
   },[success])
+  
 
   return (
     <div className='w-full h-full flex justify-center items-center'>

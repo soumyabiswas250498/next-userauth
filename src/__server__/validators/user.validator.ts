@@ -17,4 +17,9 @@ const loginSchema = Joi.object().keys({
   password: Joi.string().trim().min(3).max(30).required(),
 });
 
-export { registrationSchema, loginSchema };
+const otpSchema = Joi.object().keys({
+  email: Joi.string().email().trim().max(300).required(),
+  otp: Joi.string().trim().min(7).max(7).required()
+});
+
+export { registrationSchema, loginSchema, otpSchema };

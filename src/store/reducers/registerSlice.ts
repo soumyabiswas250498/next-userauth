@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit';
+
 
 export interface registerState {
   isLoading: boolean;
@@ -9,26 +9,26 @@ export interface registerState {
 }
 
 const initialState: registerState = {
-    isLoading: false,
-    success: false,
-    error: false, 
-    data: ''
+  isLoading: false,
+  success: false,
+  error: false,
+  data: ''
 }
 
 export const registerSlice = createSlice({
   name: 'register',
   initialState,
   reducers: {
-    setLoadingRegister: (state, action) =>{
-        state.isLoading = action.payload;
+    setLoadingRegister: (state, action) => {
+      state.isLoading = action.payload;
     },
-    setSuccessRegister: (state, action) =>{
-        state.success = action.payload;
+    setSuccessRegister: (state, action) => {
+      state.success = action.payload;
     },
-    setErrorRegister: (state, action) =>{
-        state.error = action.payload;
+    setErrorRegister: (state, action) => {
+      state.error = action.payload;
     },
-    setDataRegister: (state, action) =>{
+    setDataRegister: (state, action) => {
       state.data = action.payload;
     }
   },
