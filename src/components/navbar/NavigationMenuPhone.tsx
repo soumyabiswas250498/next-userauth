@@ -14,8 +14,12 @@ import {
 import ThemeSwitch from "../ThemeSwitch";
 import { PhoneMenu } from "../menu/PhoneNavMenu";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-export function SheetDemo() {
+export function PhonNavigationMenu() {
+  const {data, status}: any = useSession();
+  const router = useRouter()
   const menus = {
     subject: [
       { label: "Social Science", menu: [{ value: 'hist', label: 'History' }, { value: 'geog', label: 'Geography' }, { value: 'polity', label: 'Polity' }] },
@@ -38,11 +42,11 @@ export function SheetDemo() {
         <div className="w-full flex flex-col justify-between h-full relative">
 
           <div className="relative pt-10">
-          <div className="flex justify-between items-center mb-5">
+            <div className="flex justify-between items-center mb-5">
               <Button variant={'outline'} className="w-28 border-primary">Current Affairs</Button>
-              <Button variant={'outline'} className="w-28 border-primary"> Login </Button>
+              {status !== 'authenticated' && <Button variant={'outline'} className="w-28 border-primary" onClick={()=>{router.push('/auth/login')}}> Login </Button>}
             </div>
-            <PhoneMenu data={menus} />
+            <PhoneMenu data={menus} status={status} fullname={data?.user?.fullname}  />
 
 
           </div>

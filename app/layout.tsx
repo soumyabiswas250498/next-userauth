@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./provider";
 import NavBar from "@/src/components/navbar/NavBar";
-// import { NavigationMenuDemo } from "@/src/components/navbar/NavBar";
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +23,7 @@ export default function RootLayout({
         <Providers>
           <NavBar />
           {children}
+          <Toaster position="bottom-right" expand={true} duration={6000} richColors closeButton />
         </Providers>
       </body>
     </html>

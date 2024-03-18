@@ -4,7 +4,10 @@ import * as React from "react"
 import ThemeSwitch from "../ThemeSwitch";
 import { HoverMenu } from "../menu/HoverMenu";
 import { Button } from "@/components/ui/button";
-
+import { ProfileMenu } from "../menu/ProfileMenu";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import useAuthHook from "@/src/hooks/useAuthHook";
 
 
 const menus = {
@@ -22,16 +25,22 @@ const menus = {
 }
 
 export function NavigationMenu() {
+  const {status} = useSession();
+  const router = useRouter();
+  const {resendVerificationEmail} = useAuthHook()
   return (
     <div className="h-full flex justify-end items-center w-1/2 gap-2 mr-2 large-nav-menu">
       <HoverMenu data={menus.section} menuLabel={'Sections'} contentStyle={'w-[350px]'} />
       <HoverMenu data={menus.subject} menuLabel={'Subjects'} contentStyle={'w-[420px]'} />
-      <Button variant={'default'}>
+      <Button variant={'default'} onClick={()=>resendVerificationEmail()}>
         Current Affairs
       </Button>
-      <Button variant={'default'}>
+      {status !== 'authenticated' ? 
+      <Button variant={'default'} onClick={()=>{router.push('/auth/login')}}>
         Login
-      </Button>
+      </Button> :  <ProfileMenu data={menus.subject} menuLabel={'Subjects'} contentStyle={'w-[420px]'} />}
+      
+      
 
       <ThemeSwitch />
     </div>

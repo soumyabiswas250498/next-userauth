@@ -1,4 +1,3 @@
-import { CalendarIcon } from "@radix-ui/react-icons"
 import { Button } from "@/components/ui/button"
 import {
   HoverCard,
@@ -14,7 +13,7 @@ export function HoverMenu(props: any) {
         return <div className="flex flex-col">
             <h2 className="border-b-2 border-primary text-primary mb-2 cursor-default">{item.label}</h2>
             {
-                item.menu.map((item: any)=><p className="cursor-pointer hover:bg-primary hover:text-primary-foreground px-2 rounded transition duration-300 ease-in-out">{item.label}</p>)
+                item.menu.map((item: any, index: number)=><p className="cursor-pointer hover:bg-primary hover:text-primary-foreground px-2 rounded transition duration-300 ease-in-out" key={index}>{item.label}</p>)
             }
 
         </div>

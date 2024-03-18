@@ -1,8 +1,20 @@
 // app/providers.tsx
 'use client'
+import { ThemeProvider } from 'next-themes';
+import { SessionProvider } from 'next-auth/react';
+import { store } from "@/src/store/store";
+import { Provider } from 'react-redux';
 
-import { ThemeProvider } from 'next-themes'
 
 export function Providers({ children }: { children: React.ReactNode }) {
-    return <ThemeProvider attribute="class" defaultTheme='system' enableSystem>{children}</ThemeProvider>
+    return <ThemeProvider attribute="class" defaultTheme='system' enableSystem>
+        <SessionProvider>
+            <Provider store={store}>
+                
+
+                {children}
+                
+            </Provider>
+        </SessionProvider>
+    </ThemeProvider>
 }

@@ -8,10 +8,10 @@ export default function LoginRegister() {
     return (
         <div className='w-full h-full'>
             <div className='flex w-full h-10 justify-center items-center'>
-                <div className={` w-1/2 flex justify-center rounded-tl items-center h-10 cursor-pointer select-none ${pageType === 'login' ? 'bg-primary/50 text-primary-foreground border-primary/50' : 'border-b border-primary/50'}`} onClick={() => setPageType('login')}>
+                <div className={` w-1/2 flex justify-center rounded-tl items-center h-10 cursor-pointer select-none ${pageType === 'login' ? 'bg-primary/80 text-primary-foreground border-primary/70 font-semibold' : 'border-b border-primary/70'}`} onClick={() => setPageType('login')}>
                     <p>Login</p>
                 </div>
-                <div className={` w-1/2 flex justify-center rounded-tr items-center h-10 cursor-pointer select-none ${pageType === 'register' ? 'bg-primary/50 text-primary-foreground border-primary/50' : 'border-b border-primary/50'}`} onClick={() => setPageType('register')}>
+                <div className={` w-1/2 flex justify-center rounded-tr items-center h-10 cursor-pointer select-none ${pageType === 'register' ? 'bg-primary/80 text-primary-foreground border-primary/70 font-semibold' : 'border-b border-primary/70'}`} onClick={() => setPageType('register')}>
                     <p>Register</p>
                 </div>
             </div>
