@@ -65,16 +65,16 @@ function RegisterSection() {
           <Input className='border-primary/50 ring-primary/90 my-[2px]' placeholder='Email Id' id='email' value={values.email} name='email' onChange={handleChange} onBlur={handleBlur} />
           {touched.email && errors.email ? <p className='text-xs text-red-600 ml-1'>{errors.email}</p> : <p className="text-xs" > &nbsp; </p>}
         </div>
-        <div className='flex justify-center items-center gap-2'>
+        <div className='flex w-full justify-center items-center gap-2'>
 
-          <div className='flex flex-col'>
+          <div className='flex flex-col w-full '>
             <label htmlFor="password" className='text-sm'>Enter Password: </label>
-            <Input className='border-primary/50 ring-primary/90 my-[2px]' placeholder='Password' id='password' value={values.password} onChange={handleChange} onBlur={handleBlur} />
+            <Input className='border-primary/50 ring-primary/90 my-[2px]' placeholder='Password' id='password' value={values.password} onChange={handleChange} onBlur={handleBlur} type='password' />
             {touched.password && errors.password ? <p className='text-xs text-red-600 ml-1'>{errors.password}</p> : <p className="text-xs" > &nbsp; </p>}
           </div>
-          <div className='flex flex-col'>
+          <div className='flex flex-col w-full'>
             <label htmlFor="confPassword" className='text-sm'>Confirm Password: </label>
-            <Input className='border-primary/50 ring-primary/90 my-[2px]' placeholder='Confirm Password' id='confPassword' value={values.confPassword} onChange={handleChange} onBlur={handleBlur} />
+            <Input className='border-primary/50 ring-primary/90 my-[2px]' placeholder='Confirm Password' id='confPassword' value={values.confPassword} onChange={handleChange} onBlur={handleBlur} type='password' />
             {touched.confPassword && errors.confPassword ? <p className='text-xs text-red-600 ml-1'>{errors.confPassword}</p> : <p className="text-xs" > &nbsp; </p>}
 
           </div>

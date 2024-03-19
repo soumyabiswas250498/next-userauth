@@ -12,7 +12,9 @@ const loginSchema = Yup.object().shape({
 });
 
 const regSchema = Yup.object().shape({
-  name: Yup.string().max(300).required('Name is required'),
+  name: Yup.string().matches(/^[a-zA-Z\s]+$/, 'Not a valid name')
+    .max(300, 'Name must be at most 300 characters long')
+    .required('Name is required'),
 
   email: Yup.string()
     .max(300)

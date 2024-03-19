@@ -54,7 +54,8 @@ export const authOptions = {
         session.user.email = token.email;
         session.user.userName = token.userName;
         session.user.role = token.role;
-        session.user.fullname = token.fullname
+        session.user.name = token.fullname
+        session.user.image = 'NA'
       }
       return session;
     },
@@ -63,6 +64,6 @@ export const authOptions = {
 
 
 
- const handler = NextAuth(authOptions);
+const handler = NextAuth(authOptions);
 
- export { handler as GET, handler as POST };
+export { handler as GET, handler as POST };

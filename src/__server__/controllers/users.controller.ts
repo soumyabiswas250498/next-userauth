@@ -35,17 +35,18 @@ async function registerUser(data: dataI) {
   const { fullname, username, email, password } = data;
   const existingUser = await CheckExistingUser(username, email);
   if (existingUser) {
-    if (!existingUser.isVerified) {
+    if (!existingUser.isVerified && username === existingUser.username && email === existingUser.email) {
       throw new ApiError(
         httpStatus.FORBIDDEN,
         `User is not verified yet.`
       );
+    } else {
+      throw new ApiError(
+        httpStatus.CONFLICT,
+        `User with ${existingUser.email === email ? 'email' : 'username'
+        } already exists`
+      );
     }
-    throw new ApiError(
-      httpStatus.CONFLICT,
-      `User with ${existingUser.email === email ? 'email' : 'username'
-      } already exists`
-    );
   } else {
     const newUser = await CreateUser(fullname, username, email, password);
     await sendActivationEmail(newUser.email)

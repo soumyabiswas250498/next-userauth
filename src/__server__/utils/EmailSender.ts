@@ -25,7 +25,6 @@ function encryptAES(text: string) {
 // Decryption with AES
 function decryptAES(encryptedText: string) {
     try {
-        console.log(encryptedText, '***')
         const bytes = CryptoJS.AES.decrypt(encryptedText, process.env.NEXT_PUBLIC_CLIENT_SECRET as string);
         const data = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
         return data
@@ -52,7 +51,6 @@ async function sendActivationEmail(email: string) {
     const otp = generateOtp();
     const time = currentTime();
     const str = `${otp}${seperator}${time}`
-    console.log(str)
     const token = encryptAES(str)
     const transporter = nodemailer.createTransport({
         //@ts-ignore

@@ -26,7 +26,7 @@ export const useVerifyOtp = () => {
 
     const resendOtp = async () => {
         const res = await resendVerificationEmail();
-        if (success && email) {
+        if (res?.data === "Verification email is sent." && email) {
             saveEncryptedEmailLocalStorage(email)
             setCounter(tokenExpiryTime);
         }
