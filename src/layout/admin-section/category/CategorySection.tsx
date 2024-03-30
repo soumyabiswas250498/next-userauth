@@ -1,7 +1,8 @@
 
 "use client";
-import React from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SubjectSection from './SubjectSection';
 
 
 
@@ -15,7 +16,9 @@ function CategorySection() {
                     <TabsTrigger value="section" className='text-base md:text-xl'>Section</TabsTrigger>
                     <TabsTrigger value="exam" className='text-base md:text-xl'>Exam</TabsTrigger>
                 </TabsList>
-                <TabsContent value="subject">Make changes to your account here.</TabsContent>
+                <TabsContent value="subject">
+                    <SubjectSection />
+                </TabsContent>
                 <TabsContent value="topic">Change your password here.</TabsContent>
                 <TabsContent value="section">Change your password here.</TabsContent>
                 <TabsContent value="exam">Change your password here.</TabsContent>

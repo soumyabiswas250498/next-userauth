@@ -8,4 +8,4 @@ const examSchema = new Schema({
     }
 })
 
-export const Exam = mongoose.model('Exam', examSchema)
+export default mongoose.models.Exam || mongoose.model('Exam', examSchema)

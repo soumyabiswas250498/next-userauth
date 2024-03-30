@@ -8,4 +8,4 @@ const subjectSchema = new Schema({
     },
 });
 
-export const Subject = mongoose.model('Subject', subjectSchema);
+export default mongoose.models.Subject ?? mongoose.model('Subject', subjectSchema);
