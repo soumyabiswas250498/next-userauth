@@ -3,6 +3,9 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SubjectSection from './SubjectSection';
+import TopicSection from './TopicSection';
+import SectionsSection from './SectionsSection';
+import ExamSection from './ExamSection';
 
 
 
@@ -19,9 +22,15 @@ function CategorySection() {
                 <TabsContent value="subject">
                     <SubjectSection />
                 </TabsContent>
-                <TabsContent value="topic">Change your password here.</TabsContent>
-                <TabsContent value="section">Change your password here.</TabsContent>
-                <TabsContent value="exam">Change your password here.</TabsContent>
+                <TabsContent value="topic">
+                    <TopicSection />
+                </TabsContent>
+                <TabsContent value="section">
+                    <SectionsSection />
+                </TabsContent>
+                <TabsContent value="exam">
+                    <ExamSection />
+                </TabsContent>
             </Tabs>
 
         </div>

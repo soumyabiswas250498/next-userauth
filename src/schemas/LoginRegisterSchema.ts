@@ -37,4 +37,8 @@ const regSchema = Yup.object().shape({
     .required('Confirm password required'),
 });
 
-export { loginSchema, regSchema };
+const categoryForm = Yup.object().shape({
+  label: Yup.string().max(300).required('Label is required')
+})
+
+export { loginSchema, regSchema, categoryForm };

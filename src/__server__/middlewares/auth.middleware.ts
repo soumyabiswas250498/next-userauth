@@ -15,7 +15,4 @@ export async function AuthMiddleware(
     } else {
         throw new ApiError(401, 'User not authenticated');
     }
-    console.log("from middleware ", token);
-
-
 }
