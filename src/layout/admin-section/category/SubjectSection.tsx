@@ -7,7 +7,7 @@ import { editI } from '@/src/hooks/useAdminHook';
 
 function SubjectSection() {
     const [dataFinal, setDataFinal] = useState([{ id: '1', label: '' }])
-    const { fetchCategories, editCategories } = useAdminHook();
+    const { fetchCategories, editCategories, addCategories } = useAdminHook();
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['SubjectSection', 'subject'],
@@ -21,7 +21,7 @@ function SubjectSection() {
 
     const queryClient = useQueryClient()
     const mutation = useMutation({
-        mutationFn: (data: editI) => { return editCategories(data) },
+        mutationFn: (data: any) => { return data.isEdit ? editCategories(data) : addCategories(data) },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['SubjectSection', 'subject'],

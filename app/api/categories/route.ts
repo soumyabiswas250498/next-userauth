@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/src/__server__/utils/db_connect';
-import { AuthMiddleware } from '@/src/__server__/middlewares/auth.middleware';
 import { getCategories } from '@/src/__server__/controllers/categories.controller';
 import validator from '@/src/__server__/middlewares/validation.middleware';
-import { categorySchema } from '@/src/__server__/validators/user.validator';
+import { categorySchema } from '@/src/__server__/validators/categories.validator';
 
 export async function GET(req: NextRequest, res: NextResponse) {
     try {
-        // const userData = await AuthMiddleware(req)
+
         await connectDB();
         const type = req.nextUrl.searchParams.get('type')
         const subject = req.nextUrl.searchParams.get('subject')

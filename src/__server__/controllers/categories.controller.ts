@@ -2,7 +2,7 @@ import Subject from "../models/subject.model";
 import Topic from "../models/topic.model";
 import Section from "../models/section.model";
 import Exam from "../models/exam.model";
-
+import { ApiError } from "../utils/ApiError";
 
 async function getCategories(type: string, subject?: string | null) {
     try {
@@ -26,11 +26,13 @@ async function getCategories(type: string, subject?: string | null) {
         return data;
     } catch (error) {
         console.log(error)
+        throw new ApiError(
+            500, 'Something went wrong!'
+        )
     }
 }
 
 async function updateCategories(type: string, id: string, newLabel: string) {
-    console.log(type, id, newLabel)
     try {
         let data;
         if (type === 'subject') {
@@ -45,11 +47,42 @@ async function updateCategories(type: string, id: string, newLabel: string) {
         if (type === 'exam') {
             data = await Exam.findByIdAndUpdate(id, { exam: newLabel }, { new: true })
         }
-        console.log(data)
         return data
     } catch (error) {
-        console.log(error, '***')
+        console.log(error, '***updateCategories')
+        throw new ApiError(
+            500, 'Something went wrong!'
+        )
     }
 }
 
-export { getCategories, updateCategories }
+async function createCategory(type: string, label: string, subject?: string) {
+    try {
+        if (type === 'subject') {
+            const data = await Subject.create({ subject: label });
+            return data;
+        }
+        if (type === 'topic') {
+            const sub: any = await Subject.findOne({ subject: subject });
+            const data = await Topic.create({ topic: label, subject: subject, subjectId: sub._id })
+            return data;
+
+        }
+        if (type === 'section') {
+            const data = await Section.create({ section: label });
+            return data;
+        }
+        if (type === 'exam') {
+            const data = await Exam.create({ exam: label });
+            return data;
+        }
+
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(
+            500, 'Something went wrong!'
+        )
+    }
+}
+
+export { getCategories, updateCategories, createCategory }

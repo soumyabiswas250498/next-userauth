@@ -8,26 +8,14 @@ export interface editI {
     type: string,
     newLabel: string
 }
+export interface addI {
+    type: string,
+    newLabel: string,
+    subject?: string,
+}
+
 
 function useAdminHook() {
-    const dispatch = useDispatch();
-
-    const editCategoriesData = async (params: any) => {
-        try {
-            dispatch(setIsLoading(true));
-            const res = await axios.put('/api/admin/categories', params);
-            dispatch(setIsLoading(false));
-            dispatch(setSuccess(true));
-            toast.success('Edit successful')
-            console.log(res, '***r');
-        } catch (error) {
-            dispatch(setIsLoading(false));
-            dispatch(setError(false));
-            toast.warning('Edit not successful');
-            console.log(error, '***e');
-        }
-    }
-
     const fetchCategories = async (type: string, subject?: string) => {
         const res = await fetch(`/api/categories?type=${type}&subject=${subject}`)
         const data = await res.json();
@@ -35,17 +23,29 @@ function useAdminHook() {
     }
     const editCategories = async (params: editI) => {
         try {
-            const res = await axios.put('/api/admin/categories', params);
+            const res = await axios.put('/api/admin/categories', { type: params.type, id: params.id, newLabel: params.newLabel });
             toast.success('Edit successful');
             return res;
-        } catch (error) {
-            console.log(error);
-            toast.warning('Edit not successful');
+        } catch (error: any) {
+            console.log(error, '***');
+            toast.warning(error.response.data?.message);
+        }
+
+    }
+    const addCategories = async (params: addI) => {
+        console.log(params, '***')
+        try {
+            const res = await axios.post('/api/admin/categories', params.type === 'topic' ? { type: params.type, label: params.newLabel, subject: params.subject } : { type: params.type, label: params.newLabel });
+            toast.success('Added successfully');
+            return res;
+        } catch (error: any) {
+            console.log(error, '***');
+            toast.warning(error.response.data?.message);
         }
 
     }
 
-    return { editCategoriesData, fetchCategories, editCategories };
+    return { fetchCategories, editCategories, addCategories };
 }
 
 export default useAdminHook

@@ -13,7 +13,7 @@ function TopicSection() {
     const [selectedSubject, setSelectedSubject] = useState('');
     const [dataFinal, setDataFinal] = useState([{ id: '1', label: '' }]);
 
-    const { fetchCategories, editCategories } = useAdminHook();
+    const { fetchCategories, editCategories, addCategories } = useAdminHook();
 
     const { data: itemSubject, isLoading: isLoadingSubject, isError } = useQuery({
         queryKey: ['SubjectSection', 'subject'],
@@ -35,7 +35,7 @@ function TopicSection() {
 
     const queryClient = useQueryClient()
     const mutation = useMutation({
-        mutationFn: (data: editI) => { return editCategories(data) },
+        mutationFn: (data: any) => { return data.isEdit ? editCategories(data) : addCategories({ ...data, subject: selectedSubject }) },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['TopicSection', 'topic', selectedSubject],

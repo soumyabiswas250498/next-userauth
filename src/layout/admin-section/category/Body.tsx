@@ -21,7 +21,7 @@ function Form(props: any) {
         initialValues: { label: '' },
         validationSchema: categoryForm,
         onSubmit: () => {
-            mutation.mutate({ type: type, id: edit.id, newLabel: values.label })
+            mutation.mutate({ isEdit: isEdit, type: type, id: edit.id, newLabel: values.label })
         }
     });
 
@@ -31,7 +31,6 @@ function Form(props: any) {
             setFieldValue('label', edit.label)
         } else {
             setIsEdit(false);
-
         }
     }, [edit.id])
 

@@ -22,6 +22,6 @@ const otpSchema = Joi.object().keys({
   otp: Joi.string().trim().min(7).max(7).required()
 });
 
-const categorySchema = Joi.string().valid('subject', 'topic', 'section', 'exam')
 
-export { registrationSchema, loginSchema, otpSchema, categorySchema };
+
+export { registrationSchema, loginSchema, otpSchema };
