@@ -12,6 +12,9 @@ function DashBoard() {
             <Button asChild variant={'link'} className="w-28 border-primary" >
                 <Link href='/admin/questions'>View / Edit / Delete Questions</Link>
             </Button>
+            <Button asChild variant={'link'} className="w-28 border-primary" >
+                <Link href='/admin/categories'>View / Edit / Delete Categories</Link>
+            </Button>
             <Button variant={'link'} className="w-28 border-primary">Users</Button>
         </div>
     )

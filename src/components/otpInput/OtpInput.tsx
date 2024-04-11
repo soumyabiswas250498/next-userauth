@@ -10,7 +10,6 @@ function OtpInput(props: propsI) {
     const [otp, setOtp] = useState(new Array(otpLength).fill(''));
     const inputRefs: any = useRef([])
     const handleChange = (index: number, e: any) => {
-        console.log();
         const value = e.target.value;
 
         const newOtp = [...otp];

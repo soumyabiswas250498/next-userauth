@@ -22,4 +22,6 @@ const otpSchema = Joi.object().keys({
   otp: Joi.string().trim().min(7).max(7).required()
 });
 
+
+
 export { registrationSchema, loginSchema, otpSchema };

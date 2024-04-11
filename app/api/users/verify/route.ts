@@ -11,7 +11,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     // console.log(data, '***')
     await validator(data, otpSchema);
     const result = await verifyUser(data.email, data.otp);
-    console.log(result)
+    // console.log(result)
     if (result === 'expired') {
       return NextResponse.json('expired')
     } else if (result === 'success') {
