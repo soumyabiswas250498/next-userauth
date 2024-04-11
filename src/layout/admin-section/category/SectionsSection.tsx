@@ -1,21 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import useAdminHook from '@/src/hooks/useAdminHook';
 import CategoryBody from './Body';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/src/store/store';
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { editI } from '@/src/hooks/useAdminHook';
 
 function SectionsSection() {
-    const [dataFinal, setDataFinal] = useState([{ _id: '1', label: '' }]);
-    const { getCategoriesData } = useAdminHook();
-    const { isLoading, error, dataSection } = useSelector((state: RootState) => state.categoryData);
+    const [dataFinal, setDataFinal] = useState([{ id: '1', label: '' }]);
+    const { fetchCategories, editCategories } = useAdminHook();
+
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ['SectionsSection', 'section'],
+        queryFn: ({ queryKey }) => fetchCategories(queryKey[1])
+    });
     useEffect(() => {
-        if (dataSection.length) {
-            const obj = dataSection.map((item: any) => { return { id: item._id, label: item.section } }); setDataFinal(obj);
-        } else {
-            getCategoriesData({ type: 'section' })
+        if (data) {
+            const obj = data.map((item: any) => { return { id: item._id, label: item.section } }); setDataFinal(obj);
         }
-    }, [dataSection.length]);
+    }, [data]);
+
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: (data: editI) => { return editCategories(data) },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['SectionsSection', 'section'],
+            })
+        }
+    })
 
     if (isLoading) {
         return (
@@ -27,7 +39,7 @@ function SectionsSection() {
         )
     } else {
         return (
-            <CategoryBody data={dataFinal} type={'subject'} />
+            <CategoryBody data={dataFinal} type={'section'} mutation={mutation} />
         )
     }
 }

@@ -11,17 +11,17 @@ interface Iprops {
     data: [{ id: string, label: string }]
 }
 
-const isLoading = false;
+
 
 function Form(props: any) {
-    const { type, edit, setEdit } = props;
+    const { type, edit, setEdit, mutation } = props;
     const [isEdit, setIsEdit] = useState(false);
 
     const { errors, touched, values, handleChange, handleBlur, setFieldValue, handleSubmit, resetForm } = useFormik({
         initialValues: { label: '' },
         validationSchema: categoryForm,
         onSubmit: () => {
-
+            mutation.mutate({ type: type, id: edit.id, newLabel: values.label })
         }
     });
 
@@ -50,8 +50,8 @@ function Form(props: any) {
             </div>
 
             <div className="w-full flex justify-end gap-4">
-                <Button variant={'outline'} type={'submit'} className='mt-1 w-24' disabled={isLoading} onClick={() => handleSubmit()} >
-                    {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : isEdit ? 'Edit' : 'Add'}
+                <Button variant={'outline'} type={'submit'} className='mt-1 w-24' disabled={mutation?.isPending} onClick={() => handleSubmit()} >
+                    {mutation?.isPending ? <Loader2 className="h-6 w-6 animate-spin" /> : isEdit ? 'Edit' : 'Add'}
                 </Button>
                 <Button variant={'destructive'} className='mt-1 w-24' onClick={() => { setEdit({ id: '', label: '' }); resetForm() }} >
                     {'Cancel'}
@@ -63,10 +63,12 @@ function Form(props: any) {
 }
 
 function CategoryBody(props: any) {
-    const { data, type } = props;
+    const { data, type, mutation } = props;
     const [edit, setEdit] = useState({ id: '', label: '' });
     const [deleteModal, setDeleteModal] = useState({ id: '', label: '' })
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const isLoading = false;
+
     useEffect(() => {
         if (deleteModal.id !== '') {
             setIsModalOpen(true)
@@ -95,7 +97,7 @@ function CategoryBody(props: any) {
                 </div>
             </Modal>
             <div className='w-full lg:w-1/2 h-fit border p-2 rounded'>
-                <Form type={type} edit={edit} setEdit={setEdit} />
+                <Form type={type} edit={edit} setEdit={setEdit} mutation={mutation} />
             </div>
             <div className='w-full lg:w-1/2 border p-2 rounded'>
                 {data.map((item: any) => <div key={item.id} className='border p-2 my-1 hover:bg-slate-800/20 cursor-pointer select-none duration-300 ease-in-out flex justify-between'>

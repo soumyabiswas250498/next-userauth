@@ -1,24 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import useAdminHook from '@/src/hooks/useAdminHook'
 import CategoryBody from './Body';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/src/store/store';
 import { Skeleton } from "@/components/ui/skeleton"
-
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { editI } from '@/src/hooks/useAdminHook';
 
 function SubjectSection() {
-    const [dataFinal, setDataFinal] = useState([{ _id: '1', label: '' }])
-    const { getCategoriesData } = useAdminHook();
-    const { isLoading, error, dataSubject } = useSelector((state: RootState) => state.categoryData)
+    const [dataFinal, setDataFinal] = useState([{ id: '1', label: '' }])
+    const { fetchCategories, editCategories } = useAdminHook();
+
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ['SubjectSection', 'subject'],
+        queryFn: ({ queryKey }) => fetchCategories(queryKey[1])
+    });
     useEffect(() => {
-        if (dataSubject.length) {
-            const obj = dataSubject.map((item: any) => { return { id: item._id, label: item.subject } }); setDataFinal(obj)
-        } else {
-            getCategoriesData({ type: 'subject' })
+        if (data) {
+            const obj = data.map((item: any) => { return { id: item._id, label: item.subject } }); setDataFinal(obj);
         }
-    }, [dataSubject.length]);
+    }, [data]);
 
-
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: (data: editI) => { return editCategories(data) },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['SubjectSection', 'subject'],
+            })
+        }
+    })
 
     if (isLoading) {
         return (
@@ -30,7 +39,7 @@ function SubjectSection() {
         )
     } else {
         return (
-            <CategoryBody data={dataFinal} type={'subject'} />
+            <CategoryBody data={dataFinal} type={'subject'} mutation={mutation} />
         )
     }
 

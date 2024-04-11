@@ -1,35 +1,51 @@
 import { useDispatch } from 'react-redux';
 import axios from "axios";
-import { setLoadinCategory, setDataSubject, setDataTopic, setDataSection, setDataExam, setErrorCategory } from '../store/reducers/categorySlice';
+import { setIsLoading, setSuccess, setError } from '../store/reducers/editSlice';
+import { toast } from 'sonner';
+
+export interface editI {
+    id: string,
+    type: string,
+    newLabel: string
+}
 
 function useAdminHook() {
     const dispatch = useDispatch();
 
-    const getCategoriesData = async (params: any) => {
-        const { type, subject } = params;
-        console.log(type, '***')
+    const editCategoriesData = async (params: any) => {
         try {
-            dispatch(setLoadinCategory(true));
-            dispatch(setErrorCategory(false));
-            const res = type === 'topic' ? await axios.get(`/api/categories?type=${type}&subject=${subject}`) : await axios.get(`/api/categories?type=${type}`);
-            console.log(res, '***')
-            if (type === 'subject') dispatch(setDataSubject(res.data));
-            if (type === 'topic') dispatch(setDataTopic(res.data));
-            if (type === 'section') dispatch(setDataSection(res.data));
-            if (type === 'exam') dispatch(setDataExam(res.data))
-            dispatch(setLoadinCategory(false));
-            return res.data;
-
-            // console.log(res, '***')
-
+            dispatch(setIsLoading(true));
+            const res = await axios.put('/api/admin/categories', params);
+            dispatch(setIsLoading(false));
+            dispatch(setSuccess(true));
+            toast.success('Edit successful')
+            console.log(res, '***r');
         } catch (error) {
-            dispatch(setLoadinCategory(false));
-            dispatch(setErrorCategory(true));
-            console.log(error)
+            dispatch(setIsLoading(false));
+            dispatch(setError(false));
+            toast.warning('Edit not successful');
+            console.log(error, '***e');
         }
     }
 
-    return { getCategoriesData };
+    const fetchCategories = async (type: string, subject?: string) => {
+        const res = await fetch(`/api/categories?type=${type}&subject=${subject}`)
+        const data = await res.json();
+        return data;
+    }
+    const editCategories = async (params: editI) => {
+        try {
+            const res = await axios.put('/api/admin/categories', params);
+            toast.success('Edit successful');
+            return res;
+        } catch (error) {
+            console.log(error);
+            toast.warning('Edit not successful');
+        }
+
+    }
+
+    return { editCategoriesData, fetchCategories, editCategories };
 }
 
 export default useAdminHook

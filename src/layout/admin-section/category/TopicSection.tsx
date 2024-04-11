@@ -5,39 +5,52 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/src/store/store';
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { editI } from '@/src/hooks/useAdminHook';
 
 
 function TopicSection() {
-    const { getCategoriesData } = useAdminHook();
     const [selectedSubject, setSelectedSubject] = useState('');
-    const [dataFinal, setDataFinal] = useState([{ _id: '1', label: '' }]);
-    const { isLoading, error, dataSubject, dataTopic } = useSelector((state: RootState) => state.categoryData);
-    useEffect(() => {
-        if (!dataSubject.length) {
-            getCategoriesData({ type: 'subject' });
-        }
-    }, [dataSubject.length]);
+    const [dataFinal, setDataFinal] = useState([{ id: '1', label: '' }]);
+
+    const { fetchCategories, editCategories } = useAdminHook();
+
+    const { data: itemSubject, isLoading: isLoadingSubject, isError } = useQuery({
+        queryKey: ['SubjectSection', 'subject'],
+        queryFn: ({ queryKey }) => fetchCategories(queryKey[1])
+    });
+
+    const { data: dataTopic, isLoading } = useQuery({
+        queryKey: ['TopicSection', 'topic', selectedSubject],
+        queryFn: ({ queryKey }) => fetchCategories(queryKey[1], selectedSubject),
+        enabled: !!selectedSubject
+    });
+
 
     useEffect(() => {
-        if (selectedSubject) {
-            getCategoriesData({ type: 'topic', subject: selectedSubject });
-        }
-    }, [selectedSubject])
-
-    useEffect(() => {
-        if (dataTopic.length) {
+        if (dataTopic) {
             const obj = dataTopic.map((item: any) => { return { id: item._id, label: item.topic } }); setDataFinal(obj);
         }
-    }, [dataTopic[0]?._id])
+    }, [dataTopic])
+
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: (data: editI) => { return editCategories(data) },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['TopicSection', 'topic', selectedSubject],
+            })
+        }
+    })
 
     return (
         <>
-            {isLoading && !dataSubject[0]._id ? <Skeleton className="h-8 w-[250px]" /> :
+            {isLoading && isLoadingSubject ? <Skeleton className="h-8 w-[250px]" /> :
                 <div className='px-4 pt-2'>
                     <DropdownMenu>
-                        <DropdownMenuTrigger className='border border-primary/50 px-3 py-1.5 rounded'>{dataTopic[0]?.subject || selectedSubject || 'Select Subject'}</DropdownMenuTrigger>
+                        <DropdownMenuTrigger className='border border-primary/50 px-3 py-1.5 rounded'>{selectedSubject || 'Select Subject'}</DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            {dataSubject.map((item: any) => <DropdownMenuItem key={item._id} onClick={() => setSelectedSubject(item.subject)} >{item.subject}</DropdownMenuItem>)}
+                            {itemSubject && itemSubject.map((item: any) => <DropdownMenuItem key={item._id} onClick={() => setSelectedSubject(item.subject)} >{item.subject}</DropdownMenuItem>)}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -50,7 +63,7 @@ function TopicSection() {
                     <Skeleton className="h-14 w-full" />
                 </div>
                 :
-                dataTopic[0]?._id && <CategoryBody data={dataFinal} type={'topic'} />
+                dataTopic && <CategoryBody data={dataFinal} type={'topic'} mutation={mutation} />
             }
         </>
 

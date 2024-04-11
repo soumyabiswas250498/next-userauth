@@ -3,6 +3,7 @@ import registerSlice from './reducers/registerSlice';
 import resendOtpSlice from './reducers/resendOtpSlice';
 import loginSlice from './reducers/loginSlice';
 import categorySlice from './reducers/categorySlice';
+import editSlice from './reducers/editSlice';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     resendOtpData: resendOtpSlice,
     loginData: loginSlice,
     categoryData: categorySlice,
+    editData: editSlice,
   },
 })
 

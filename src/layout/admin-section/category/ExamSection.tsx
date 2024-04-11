@@ -1,21 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import useAdminHook from '@/src/hooks/useAdminHook';
 import CategoryBody from './Body';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/src/store/store';
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { editI } from '@/src/hooks/useAdminHook';
 
 function ExamSection() {
-    const [dataFinal, setDataFinal] = useState([{ _id: '1', label: '' }]);
-    const { getCategoriesData } = useAdminHook();
-    const { isLoading, error, dataExam } = useSelector((state: RootState) => state.categoryData);
-    useEffect(() => {
-        if (dataExam.length) {
-            const obj = dataExam.map((item: any) => { return { id: item._id, label: item.exam } }); setDataFinal(obj);
-        } else {
-            getCategoriesData({ type: 'exam' })
+    const [dataFinal, setDataFinal] = useState([{ id: '1', label: '' }]);
+    const { fetchCategories, editCategories } = useAdminHook();
+
+    const { data, isLoading, isError, error } = useQuery({
+        queryKey: ['ExamSection', 'exam'],
+        queryFn: ({ queryKey }) => fetchCategories(queryKey[1])
+    })
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: (data: editI) => { return editCategories(data) },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['ExamSection', 'exam'],
+            })
         }
-    }, [dataExam.length]);
+    })
+
+    useEffect(() => {
+        if (data) {
+            const obj = data.map((item: any) => { return { id: item._id, label: item.exam } }); setDataFinal(obj);
+        }
+    }, [data]);
 
     if (isLoading) {
         return (
@@ -27,7 +39,7 @@ function ExamSection() {
         )
     } else {
         return (
-            <CategoryBody data={dataFinal} type={'subject'} />
+            <CategoryBody data={dataFinal} type={'exam'} mutation={mutation} />
         )
     }
 }
