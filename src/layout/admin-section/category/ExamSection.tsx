@@ -7,8 +7,8 @@ import { editI } from '@/src/hooks/useAdminHook';
 
 function ExamSection() {
     const [dataFinal, setDataFinal] = useState([{ id: '1', label: '' }]);
-    const { fetchCategories, editCategories, addCategories } = useAdminHook();
-
+    const { fetchCategories, editCategories, addCategories, deleteCategory } = useAdminHook();
+    const [success, setSuccess] = useState(false);
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['ExamSection', 'exam'],
         queryFn: ({ queryKey }) => fetchCategories(queryKey[1])
@@ -19,7 +19,8 @@ function ExamSection() {
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['ExamSection', 'exam'],
-            })
+            });
+            setSuccess(true);
         }
     })
 
@@ -28,6 +29,16 @@ function ExamSection() {
             const obj = data.map((item: any) => { return { id: item._id, label: item.exam } }); setDataFinal(obj);
         }
     }, [data]);
+
+    const deleteFunc = async (id: string, type: string) => {
+        const res: any = await deleteCategory(id, type);
+        if (res?.data?.success) {
+            queryClient.invalidateQueries({
+                queryKey: ['ExamSection', 'exam'],
+            })
+            setSuccess(true);
+        }
+    }
 
     if (isLoading) {
         return (
@@ -39,7 +50,7 @@ function ExamSection() {
         )
     } else {
         return (
-            <CategoryBody data={dataFinal} type={'exam'} mutation={mutation} />
+            <CategoryBody data={dataFinal} type={'exam'} mutation={mutation} deleteFunc={deleteFunc} success={success} setSuccess={setSuccess} />
         )
     }
 }

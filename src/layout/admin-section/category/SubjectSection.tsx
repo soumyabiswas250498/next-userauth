@@ -7,7 +7,8 @@ import { editI } from '@/src/hooks/useAdminHook';
 
 function SubjectSection() {
     const [dataFinal, setDataFinal] = useState([{ id: '1', label: '' }])
-    const { fetchCategories, editCategories, addCategories } = useAdminHook();
+    const { fetchCategories, editCategories, addCategories, deleteCategory } = useAdminHook();
+    const [success, setSuccess] = useState(false);
 
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ['SubjectSection', 'subject'],
@@ -27,7 +28,17 @@ function SubjectSection() {
                 queryKey: ['SubjectSection', 'subject'],
             })
         }
-    })
+    });
+
+    const deleteFunc = async (id: string, type: string) => {
+        const res: any = await deleteCategory(id, type);
+        if (res?.data?.success) {
+            queryClient.invalidateQueries({
+                queryKey: ['SubjectSection', 'subject'],
+            })
+            setSuccess(true);
+        }
+    }
 
     if (isLoading) {
         return (
@@ -39,7 +50,7 @@ function SubjectSection() {
         )
     } else {
         return (
-            <CategoryBody data={dataFinal} type={'subject'} mutation={mutation} />
+            <CategoryBody data={dataFinal} type={'subject'} mutation={mutation} deleteFunc={deleteFunc} success={success} setSuccess={setSuccess} />
         )
     }
 

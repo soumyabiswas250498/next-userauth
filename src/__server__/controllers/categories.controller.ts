@@ -58,25 +58,26 @@ async function updateCategories(type: string, id: string, newLabel: string) {
 
 async function createCategory(type: string, label: string, subject?: string) {
     try {
+        let data;
         if (type === 'subject') {
-            const data = await Subject.create({ subject: label });
+            data = await Subject.create({ subject: label });
             return data;
         }
         if (type === 'topic') {
             const sub: any = await Subject.findOne({ subject: subject });
-            const data = await Topic.create({ topic: label, subject: subject, subjectId: sub._id })
+            data = await Topic.create({ topic: label, subject: subject, subjectId: sub._id })
             return data;
 
         }
         if (type === 'section') {
-            const data = await Section.create({ section: label });
+            data = await Section.create({ section: label });
             return data;
         }
         if (type === 'exam') {
-            const data = await Exam.create({ exam: label });
+            data = await Exam.create({ exam: label });
             return data;
         }
-
+        return data;
     } catch (error) {
         console.log(error);
         throw new ApiError(
@@ -85,4 +86,28 @@ async function createCategory(type: string, label: string, subject?: string) {
     }
 }
 
-export { getCategories, updateCategories, createCategory }
+async function deleteCategory(type: string, id: string) {
+    try {
+        let data;
+        if (type === 'subject') {
+            data = await Subject.findByIdAndDelete(id);
+        }
+        if (type === 'topic') {
+            data = await Topic.findByIdAndDelete(id);
+        }
+        if (type === 'section') {
+            data = await Section.findByIdAndDelete(id);
+        }
+        if (type === 'exam') {
+            data = await Exam.findByIdAndDelete(id);
+        }
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(
+            500, 'Something went wrong!'
+        )
+    }
+
+}
+
+export { getCategories, updateCategories, createCategory, deleteCategory }

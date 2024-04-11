@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useAdminHook from '@/src/hooks/useAdminHook'
 import CategoryBody from './Body';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/src/store/store';
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -12,8 +10,9 @@ import { editI } from '@/src/hooks/useAdminHook';
 function TopicSection() {
     const [selectedSubject, setSelectedSubject] = useState('');
     const [dataFinal, setDataFinal] = useState([{ id: '1', label: '' }]);
+    const [success, setSuccess] = useState(false);
 
-    const { fetchCategories, editCategories, addCategories } = useAdminHook();
+    const { fetchCategories, editCategories, addCategories, deleteCategory } = useAdminHook();
 
     const { data: itemSubject, isLoading: isLoadingSubject, isError } = useQuery({
         queryKey: ['SubjectSection', 'subject'],
@@ -43,6 +42,16 @@ function TopicSection() {
         }
     })
 
+    const deleteFunc = async (id: string, type: string) => {
+        const res: any = await deleteCategory(id, type);
+        if (res?.data?.success) {
+            queryClient.invalidateQueries({
+                queryKey: ['TopicSection', 'topic', selectedSubject],
+            })
+            setSuccess(true);
+        }
+    }
+
     return (
         <>
             {isLoading && isLoadingSubject ? <Skeleton className="h-8 w-[250px]" /> :
@@ -63,7 +72,7 @@ function TopicSection() {
                     <Skeleton className="h-14 w-full" />
                 </div>
                 :
-                dataTopic && <CategoryBody data={dataFinal} type={'topic'} mutation={mutation} />
+                dataTopic && <CategoryBody data={dataFinal} type={'topic'} mutation={mutation} deleteFunc={deleteFunc} success={success} setSuccess={setSuccess} />
             }
         </>
 

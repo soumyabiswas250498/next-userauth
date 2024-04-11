@@ -33,7 +33,6 @@ function useAdminHook() {
 
     }
     const addCategories = async (params: addI) => {
-        console.log(params, '***')
         try {
             const res = await axios.post('/api/admin/categories', params.type === 'topic' ? { type: params.type, label: params.newLabel, subject: params.subject } : { type: params.type, label: params.newLabel });
             toast.success('Added successfully');
@@ -44,8 +43,20 @@ function useAdminHook() {
         }
 
     }
+    const deleteCategory = async (id: string, type: string) => {
+        try {
+            const res = await axios.delete(`/api/admin/categories?id=${id}&type=${type}`);
+            toast.success('Deleted successfully');
+            return res;
 
-    return { fetchCategories, editCategories, addCategories };
+        } catch (error) {
+            console.log(error)
+            toast.warning('Something went wrong!')
+        }
+
+    }
+
+    return { fetchCategories, editCategories, addCategories, deleteCategory };
 }
 
 export default useAdminHook

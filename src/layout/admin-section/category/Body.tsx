@@ -14,7 +14,7 @@ interface Iprops {
 
 
 function Form(props: any) {
-    const { type, edit, setEdit, mutation } = props;
+    const { type, edit, setEdit, mutation, success, setSuccess } = props;
     const [isEdit, setIsEdit] = useState(false);
 
     const { errors, touched, values, handleChange, handleBlur, setFieldValue, handleSubmit, resetForm } = useFormik({
@@ -33,6 +33,14 @@ function Form(props: any) {
             setIsEdit(false);
         }
     }, [edit.id])
+
+    useEffect(() => {
+        if (success) {
+            resetForm();
+            setEdit({ id: '', label: '' });
+            setSuccess(false);
+        }
+    }, [success])
 
     return (
         <div className="w-full h-fit">
@@ -62,7 +70,7 @@ function Form(props: any) {
 }
 
 function CategoryBody(props: any) {
-    const { data, type, mutation } = props;
+    const { data, type, mutation, deleteFunc, success, setSuccess } = props;
     const [edit, setEdit] = useState({ id: '', label: '' });
     const [deleteModal, setDeleteModal] = useState({ id: '', label: '' })
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -77,7 +85,12 @@ function CategoryBody(props: any) {
         if (!isModalOpen) {
             setDeleteModal({ id: '', label: '' })
         }
-    }, [isModalOpen])
+        if (success) {
+            setDeleteModal({ id: '', label: '' });
+            setIsModalOpen(false);
+            setSuccess(false);
+        }
+    }, [isModalOpen, success])
 
     return (
         <div className='w-full p-4 flex flex-col lg:flex-row justify-between gap-2'>
@@ -85,7 +98,7 @@ function CategoryBody(props: any) {
                 <div className="flex flex-col">
                     <h2>Are you sure to delete {deleteModal.label} ? </h2>
                     <div className="w-full flex justify-end gap-4">
-                        <Button variant={'outline'} type={'submit'} className='mt-1' disabled={isLoading} >
+                        <Button variant={'outline'} type={'submit'} className='mt-1' disabled={isLoading} onClick={() => { deleteFunc(deleteModal.id, type) }} >
                             {isLoading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Yes'}
                         </Button>
                         <Button variant={'destructive'} type={'submit'} className='mt-1' onClick={() => { setIsModalOpen(false) }} >
@@ -96,7 +109,7 @@ function CategoryBody(props: any) {
                 </div>
             </Modal>
             <div className='w-full lg:w-1/2 h-fit border p-2 rounded'>
-                <Form type={type} edit={edit} setEdit={setEdit} mutation={mutation} />
+                <Form type={type} edit={edit} setEdit={setEdit} mutation={mutation} success={success} setSuccess={setSuccess} />
             </div>
             <div className='w-full lg:w-1/2 border p-2 rounded'>
                 {data.map((item: any) => <div key={item.id} className='border p-2 my-1 hover:bg-slate-800/20 cursor-pointer select-none duration-300 ease-in-out flex justify-between'>
