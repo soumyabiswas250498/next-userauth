@@ -13,7 +13,7 @@ const menus = {
 
 function NavBar() {
     return (
-        <div className='w-screen flex justify-between h-[75px] mb-[10px] lg:mb-0'>
+        <div className='w-full flex justify-between h-[75px] mb-[10px] lg:mb-0'>
             <div className='flex items-center h-[75px] p-2'>
                 <Image src={'/logo.png'} alt='Logo' width={200} height={75} className='m-2' />
             </div>

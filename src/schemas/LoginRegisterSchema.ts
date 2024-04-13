@@ -41,4 +41,13 @@ const categoryForm = Yup.object().shape({
   label: Yup.string().max(300).required('Label is required')
 })
 
-export { loginSchema, regSchema, categoryForm };
+const questionForm = Yup.object().shape({
+  question: Yup.string().max(5000).required(),
+  option1: Yup.string().max(5000).required(),
+  option2: Yup.string().max(5000).required(),
+  option3: Yup.string().max(5000).required(),
+  option4: Yup.string().max(5000).required(),
+  correctOption: Yup.number().required()
+})
+
+export { loginSchema, regSchema, categoryForm, questionForm };
