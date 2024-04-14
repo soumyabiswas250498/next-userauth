@@ -33,7 +33,7 @@ function AddQuestionForm() {
             </div>
             <form className='w-full px-4 ' onSubmit={handleSubmit}>
                 <div className='flex flex-col lg:flex-row justify-center items-center gap-2'>
-                    <div className='w-full lg:w-8/12 border p-2'>
+                    <div className='w-full lg:w-8/12 border rounded p-2'>
                         <div className='py-1'>
                             <p>Question :</p>
                             <Textarea
@@ -113,7 +113,7 @@ function AddQuestionForm() {
                         </div>
 
                     </div>
-                    <div className='w-full lg:w-4/12 border p-2'>
+                    <div className='w-full lg:w-4/12 border rounded p-2'>
                         test
                     </div>
                 </div>
