@@ -12,15 +12,46 @@ export interface addI {
     type: string,
     newLabel: string,
     subject?: string,
+    section?: string
 }
 
 
 function useAdminHook() {
-    const fetchCategories = async (type: string, subject?: string) => {
-        const res = await fetch(`/api/categories?type=${type}&subject=${subject}`)
+
+    /** Create category */
+    const addCategories = async (params: addI) => {
+        const { type, newLabel, subject, section } = params;
+        let data: any = {
+            type: type,
+            label: newLabel,
+        };
+        if (type === 'topic') {
+            data.subject = subject;
+        }
+        if (type === 'exam') {
+            data.section = section
+        }
+        console.log(data, '***D')
+        try {
+            let res = await axios.post('/api/admin/categories', data);
+            toast.success('Added successfully');
+            return res;
+        } catch (error: any) {
+            console.log(error, '***');
+            toast.warning(error.response.data?.message);
+        }
+
+    }
+
+    /** read category */
+    const fetchCategories = async (type: string, category?: string) => {
+        const res = await fetch(`/api/categories?type=${type}&category=${category}`)
         const data = await res.json();
         return data;
     }
+
+
+
     const editCategories = async (params: editI) => {
         try {
             const res = await axios.put('/api/admin/categories', { type: params.type, id: params.id, newLabel: params.newLabel });
@@ -32,17 +63,9 @@ function useAdminHook() {
         }
 
     }
-    const addCategories = async (params: addI) => {
-        try {
-            const res = await axios.post('/api/admin/categories', params.type === 'topic' ? { type: params.type, label: params.newLabel, subject: params.subject } : { type: params.type, label: params.newLabel });
-            toast.success('Added successfully');
-            return res;
-        } catch (error: any) {
-            console.log(error, '***');
-            toast.warning(error.response.data?.message);
-        }
 
-    }
+
+
     const deleteCategory = async (id: string, type: string) => {
         try {
             const res = await axios.delete(`/api/admin/categories?id=${id}&type=${type}`);

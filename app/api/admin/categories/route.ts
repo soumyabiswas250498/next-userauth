@@ -48,7 +48,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         const data = await req.json();
         await validator(data, createCategorySchema)
         await connectDB();
-        const createdData = await createCategory(data.type, data.label, data?.subject);
+        const createdData = await createCategory(data.type, data.label, data?.subject, data?.section);
         return NextResponse.json({ 'success': "true", "message": "data added successfully", "data": createdData })
     } catch (error: any) {
         return NextResponse.json({
