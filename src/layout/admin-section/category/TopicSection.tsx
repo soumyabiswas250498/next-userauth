@@ -4,7 +4,6 @@ import CategoryBody from './Body';
 import { Skeleton } from "@/components/ui/skeleton";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { editI } from '@/src/hooks/useAdminHook';
 
 
 function TopicSection() {

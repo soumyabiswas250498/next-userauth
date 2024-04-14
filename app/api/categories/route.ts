@@ -9,9 +9,9 @@ export async function GET(req: NextRequest, res: NextResponse) {
 
         await connectDB();
         const type = req.nextUrl.searchParams.get('type')
-        const subject = req.nextUrl.searchParams.get('subject')
+        const category = req.nextUrl.searchParams.get('category')
         await validator(type, categorySchema)
-        const data = await getCategories(type as string, subject)
+        const data = await getCategories(type as string, category)
         return NextResponse.json(data)
 
     } catch (error: any) {
