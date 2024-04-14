@@ -4,15 +4,51 @@ import Section from "../models/section.model";
 import Exam from "../models/exam.model";
 import { ApiError } from "../utils/ApiError";
 
-async function getCategories(type: string, subject?: string | null) {
+
+
+async function createCategory(type: string, label: string, subject?: string, section?: string) {
+    try {
+        let data;
+        if (type === 'subject') {
+            data = await Subject.create({ subject: label });
+            return data;
+        }
+        if (type === 'topic') {
+            const sub: any = await Subject.findOne({ subject: subject });
+            data = await Topic.create({ topic: label, subject: subject, subjectId: sub._id })
+            return data;
+
+        }
+        if (type === 'section') {
+            data = await Section.create({ section: label });
+            return data;
+        }
+        if (type === 'exam') {
+            const sec: any = await Section.findOne({ section: section });
+            console.log(sec, '***sec');
+            data = await Exam.create({ exam: label, section: sec.section, sectionId: sec._id });
+            console.log(data, '***data')
+            return data;
+        }
+        return data;
+    } catch (error) {
+        console.log(error);
+        throw new ApiError(
+            500, 'Something went wrong!'
+        )
+    }
+}
+
+
+async function getCategories(type: string, category?: string | null) {
     try {
         let data;
         if (type === 'subject') {
             data = await Subject.find()
         }
         if (type === 'topic') {
-            if (subject) {
-                data = await Topic.find({ subject: subject })
+            if (category) {
+                data = await Topic.find({ subject: category })
             } else {
                 data = await Topic.find()
             }
@@ -21,7 +57,11 @@ async function getCategories(type: string, subject?: string | null) {
             data = await Section.find()
         }
         if (type === 'exam') {
-            data = await Exam.find()
+            if (category) {
+                data = await Exam.find({ section: category })
+            } else {
+                data = await Exam.find()
+            }
         }
         return data;
     } catch (error) {
@@ -56,35 +96,7 @@ async function updateCategories(type: string, id: string, newLabel: string) {
     }
 }
 
-async function createCategory(type: string, label: string, subject?: string) {
-    try {
-        let data;
-        if (type === 'subject') {
-            data = await Subject.create({ subject: label });
-            return data;
-        }
-        if (type === 'topic') {
-            const sub: any = await Subject.findOne({ subject: subject });
-            data = await Topic.create({ topic: label, subject: subject, subjectId: sub._id })
-            return data;
 
-        }
-        if (type === 'section') {
-            data = await Section.create({ section: label });
-            return data;
-        }
-        if (type === 'exam') {
-            data = await Exam.create({ exam: label });
-            return data;
-        }
-        return data;
-    } catch (error) {
-        console.log(error);
-        throw new ApiError(
-            500, 'Something went wrong!'
-        )
-    }
-}
 
 async function deleteCategory(type: string, id: string) {
     try {

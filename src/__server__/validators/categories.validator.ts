@@ -17,7 +17,12 @@ const createCategorySchema = Joi.object().keys({
         is: 'topic',
         then: Joi.string().required(),
         otherwise: Joi.forbidden()
-    })
+    }),
+    section: Joi.when('type', {
+        is: 'exam',
+        then: Joi.string().required(),
+        otherwise: Joi.forbidden()
+    }),
 })
 
 const deleteCategoryValidator = Joi.object().keys({
