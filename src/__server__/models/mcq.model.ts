@@ -50,4 +50,4 @@ const mcqSchema = new Schema(
     }
 );
 
-export const Mcq = mongoose.model('Mcq', mcqSchema);
+export const Mcq = mongoose.models.Mcq || mongoose.model('Mcq', mcqSchema);

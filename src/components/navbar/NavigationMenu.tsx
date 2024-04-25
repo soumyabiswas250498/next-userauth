@@ -33,9 +33,9 @@ export function NavigationMenu() {
   const router = useRouter();
   const { categoryApiCalls } = useFirstEvent()
 
-  useEffect(() => {
-    categoryApiCalls();
-  }, [])
+  // useEffect(() => {
+  //   categoryApiCalls();
+  // }, [])
 
   return (
     <div className="h-full flex justify-end items-center w-1/2 gap-2 mr-2 large-nav-menu">

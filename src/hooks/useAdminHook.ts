@@ -80,7 +80,20 @@ function useAdminHook() {
 
     }
 
-    return { fetchCategories, editCategories, addCategories, deleteCategory };
+    const addQuestion = async (data: any) => {
+
+        try {
+            let res = await axios.post('/api/admin/questions', data);
+            toast.success('Added successfully');
+            return res;
+        } catch (error: any) {
+            console.log(error, '***');
+            toast.warning(error.response.data?.message);
+        }
+
+    }
+
+    return { fetchCategories, editCategories, addCategories, deleteCategory, addQuestion };
 }
 
 export default useAdminHook

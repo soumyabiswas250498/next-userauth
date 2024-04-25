@@ -10,7 +10,8 @@ import useFirstEvent from '@/src/hooks/useFirstEvent';
 import LinkedMenu from '@/src/components/linkedMenu/LinkedMenu';
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from 'sonner';
-
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import useAdminHook from '@/src/hooks/useAdminHook';
 
 
 const initialValues = {
@@ -31,10 +32,16 @@ function AddQuestionForm() {
     const [subjects, setSubjects]: any = useState();
     const [sections, setSections]: any = useState();
     const { categoryApiCalls } = useFirstEvent()
+    const { addQuestion } = useAdminHook();
 
     useEffect(() => {
         categoryApiCalls().then((data) => { const { subjectObj, sectionObj } = data; setSubjects(subjectObj); setSections(sectionObj) });
-    }, [])
+    }, []);
+
+    const mutation = useMutation({
+        mutationFn: (data: any) => addQuestion(data),
+        onSuccess: () => { resetForm() }
+    });
 
 
 
@@ -42,7 +49,22 @@ function AddQuestionForm() {
         initialValues,
         validationSchema: questionForm,
         onSubmit: () => {
-            console.log(values, '***v')
+            console.log(values, '***v');
+            mutation.mutate(
+                {
+                    question: values.question,
+                    option1: values.option1,
+                    option2: values.option2,
+                    option3: values.option3,
+                    option4: values.option4,
+                    explaination: values.explaination,
+                    correctOption: values.correctOption,
+                    selectedSubject: values.selectedSubject,
+                    selectedTopic: values.selectedTopic,
+                    selectedSection: [values.selectedSection],
+                    selectedExam: [values.selectedExam]
+                }
+            );
         }
     })
 
@@ -173,8 +195,8 @@ function AddQuestionForm() {
                     </div>
                 </div>
                 <div className='w-full flex justify-center items-center my-2'>
-                    <Button variant={'default'} type={'submit'} className='mt-1 w-24' disabled={false} >
-                        {false ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Submit'}
+                    <Button variant={'default'} type={'submit'} className='mt-1 w-24' disabled={mutation?.isPending} >
+                        {mutation?.isPending ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Submit'}
                     </Button>
                 </div>
 
