@@ -47,7 +47,12 @@ const questionForm = Yup.object().shape({
   option2: Yup.string().max(5000).required(),
   option3: Yup.string().max(5000).required(),
   option4: Yup.string().max(5000).required(),
-  correctOption: Yup.number().required()
+  explaination: Yup.string().max(5000).required(),
+  correctOption: Yup.number().required().notOneOf([-1], 'Choose correct option.'),
+  selectedSubject: Yup.string().max(5000).required(),
+  selectedTopic: Yup.string().max(5000).required(),
+  selectedSection: Yup.string().max(5000).required(),
+  selectedExam: Yup.string().max(5000).required()
 })
 
 export { loginSchema, regSchema, categoryForm, questionForm };

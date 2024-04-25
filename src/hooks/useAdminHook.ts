@@ -45,7 +45,8 @@ function useAdminHook() {
 
     /** read category */
     const fetchCategories = async (type: string, category?: string) => {
-        const res = await fetch(`/api/categories?type=${type}&category=${category}`)
+        let params = category ? `type=${type}&category=${category}` : `type=${type}`;
+        const res = await fetch(`/api/categories?${params}`)
         const data = await res.json();
         return data;
     }

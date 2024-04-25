@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button";
 import { ProfileMenu } from "../menu/ProfileMenu";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import useAuthHook from "@/src/hooks/useAuthHook";
+import { useEffect } from "react";
+import useFirstEvent from "@/src/hooks/useFirstEvent";
+
 
 
 const menus = {
@@ -24,24 +26,32 @@ const menus = {
   ],
 }
 
+
+
 export function NavigationMenu() {
-  const {status} = useSession();
+  const { status } = useSession();
   const router = useRouter();
-  const {resendVerificationEmail} = useAuthHook()
+  const { categoryApiCalls } = useFirstEvent()
+
+  useEffect(() => {
+    categoryApiCalls();
+  }, [])
+
   return (
     <div className="h-full flex justify-end items-center w-1/2 gap-2 mr-2 large-nav-menu">
       <HoverMenu data={menus.section} menuLabel={'Sections'} contentStyle={'w-[350px]'} />
       <HoverMenu data={menus.subject} menuLabel={'Subjects'} contentStyle={'w-[420px]'} />
-      <Button variant={'default'} onClick={()=>resendVerificationEmail()}>
+      <Button variant={'default'} onClick={() => { }}>
         Current Affairs
       </Button>
-      {status !== 'authenticated' ? 
-      <Button variant={'default'} onClick={()=>{router.push('/auth/login')}}>
-        Login
-      </Button> :  <ProfileMenu data={menus.subject} menuLabel={'Subjects'} contentStyle={'w-[420px]'} />}
-      
-      
-
+      {
+        status !== 'authenticated' ?
+          <Button variant={'default'} onClick={() => { router.push('/auth/login') }}>
+            Login
+          </Button>
+          :
+          <ProfileMenu data={menus.subject} menuLabel={'Subjects'} contentStyle={'w-[420px]'} />
+      }
       <ThemeSwitch />
     </div>
   )
